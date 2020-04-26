@@ -32,21 +32,19 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
  */
 public class MyHeaderView extends LinearLayout implements RefreshHeader {
     private static final String L = "MyTag";
-    private TextView tvHeadText;
-    public ImageView gifView;
+    public GifView gifView;
     public View view;
     public MyHeaderView(Context context) {
         super(context);
         setGravity(Gravity.CENTER_HORIZONTAL);
         view=View.inflate(context, R.layout.head_animate_view,null);
         gifView=view.findViewById(R.id.gif);
-        tvHeadText=view.findViewById(R.id.tv_head_text);
-//        gifView.pause();//暂停动画
-//        gifView.setGifResource(R.drawable.load);
+        gifView.play();//暂停动画
+        gifView.setGifResource(R.drawable.load);
         addView(view);
     }
 
-    public MyHeaderView(Context context,View customView,ImageView gifView) {
+    public MyHeaderView(Context context,View customView,GifView gifView) {
         super(context);
         if(customView==null||gifView==null){
             throw new NullPointerException("view can not be null on create MyHeadView");
@@ -54,7 +52,7 @@ public class MyHeaderView extends LinearLayout implements RefreshHeader {
         this.view=customView;
         this.gifView=gifView;
         setGravity(Gravity.CENTER_HORIZONTAL);
-        pause(gifView);//暂停动画
+        gifView.play();//暂停动画
         addView(customView);
     }
 
@@ -73,16 +71,6 @@ public class MyHeaderView extends LinearLayout implements RefreshHeader {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    private void play(ImageView gifView) {
-        Animation animate = AnimationUtils.loadAnimation(getContext(), R.anim.rotationing);
-        animate.setInterpolator(new LinearInterpolator());
-        animate.setFillAfter(true);
-        gifView.startAnimation(animate);
-    }
-
-    private void pause(ImageView gifView) {
-        gifView.clearAnimation();
-    }
 
     @NonNull
     @Override
@@ -107,17 +95,12 @@ public class MyHeaderView extends LinearLayout implements RefreshHeader {
 
     @Override
     public void onMoving(boolean isDragging, float percent, int offset, int height, int maxDragHeight) {
-        if(isDragging) {
-            tvHeadText.setText(getResources().getString(R.string.srl_header_release));
-        }else{
-            tvHeadText.setText(getResources().getString(R.string.srl_header_refreshing));
-        }
-        pause(gifView);
+
     }
 
     @Override
-    public void onReleased(RefreshLayout refreshLayout, int height, int maxDragHeight) {
-        play(gifView);//开始动画
+    public void onReleased(@NonNull RefreshLayout refreshLayout, int height, int maxDragHeight) {
+
     }
 
     @Override
@@ -127,18 +110,22 @@ public class MyHeaderView extends LinearLayout implements RefreshHeader {
 
     @Override
     public void onStartAnimator(RefreshLayout layout, int height, int extendHeight) {
-        play(gifView);//开始动画
+        gifView.play();//开始动画
     }
 
     @Override
     public int onFinish(RefreshLayout layout, boolean success) {
-        pause(gifView);//停止动画
+//        gifView.pause();//停止动画
         if (success){
             Log.d(L,"刷新完成");
         } else {
             Log.d(L,"刷新完成");
         }
-        return 200;//延迟300毫秒之后再弹回
+        return setRefreshFinishDelayTime();//延迟300毫秒之后再弹回
+    }
+
+    public int setRefreshFinishDelayTime() {
+        return 300;
     }
 
     @Override

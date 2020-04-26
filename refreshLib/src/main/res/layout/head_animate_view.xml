@@ -11,14 +11,14 @@
         android:layout_gravity="center"
         android:orientation="horizontal"
         >
-        <ImageView
+        <com.cunoraz.gifview.library.GifView
             android:id="@+id/gif"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:visibility="visible"
             android:tint="@color/rotate_color"
             android:layout_marginRight="5dp"
-            android:src="@drawable/roate_2" />
+            android:src="@drawable/load" />
         <TextView
             android:id="@+id/tv_head_text"
             android:layout_width="wrap_content"

@@ -35,7 +35,7 @@ public class MyFooterView extends LinearLayout implements RefreshFooter {
     private  View footerRoot;
     public TextView headText;
     public View footerNoMoreLayout;
-    public ImageView gifView;
+    public GifView gifView;
     public View view;
     //数据是否已经完全加载
     private boolean isFinished=false;
@@ -50,13 +50,13 @@ public class MyFooterView extends LinearLayout implements RefreshFooter {
         footerRoot=view.findViewById(R.id.ll_foot_load);
         footerNoMoreLayout.setVisibility(GONE);
         Log.d("footer","隐藏footer");
-//        gifView.pause();//暂停动画
-//        gifView.setGifResource(R.drawable.load);
+        gifView.pause();//暂停动画
+        gifView.setGifResource(R.drawable.load);
         headText.setVisibility(VISIBLE);
         addView(view);
     }
 
-    public MyFooterView(Context context, View customView, ImageView gifView, TextView headText, View footerText) {
+    public MyFooterView(Context context, View customView, GifView gifView, TextView headText, View footerText) {
         super(context);
         setGravity(Gravity.CENTER_HORIZONTAL);
         //自定义下部显示控件
@@ -66,7 +66,7 @@ public class MyFooterView extends LinearLayout implements RefreshFooter {
         this.footerNoMoreLayout =footerText;
         this.footerNoMoreLayout.setVisibility(GONE);
         Log.d("footer","隐藏footer");
-//        this.gifView.pause();//暂停动画
+        this.gifView.pause();//暂停动画
         this.headText.setVisibility(GONE);
         addView(view);
     }
@@ -128,42 +128,33 @@ public class MyFooterView extends LinearLayout implements RefreshFooter {
     @Override
     public void onStartAnimator(RefreshLayout layout, int height, int extendHeight) {
         if(isFinished){
-                gifView.setVisibility(GONE);
+            gifView.setVisibility(GONE);
         }else {
-                gifView.setVisibility(VISIBLE);
-                play(gifView);//开始动画
+            gifView.setVisibility(VISIBLE);
+            gifView.play();//开始动画
         }
     }
 
-    private void play(ImageView gifView) {
-        Animation animate = AnimationUtils.loadAnimation(getContext(), R.anim.rotationing);
-        animate.setInterpolator(new LinearInterpolator());
-        animate.setFillAfter(true);
-        gifView.startAnimation(animate);
-    }
-
-    private void pause(ImageView gifView) {
-        gifView.clearAnimation();
-    }
-
-
     @Override
     public int onFinish(RefreshLayout layout, boolean success) {
-        pause(gifView);//开始动画
         if(isFinished){
             gifView.setVisibility(GONE);
         }else {
             gifView.setVisibility(VISIBLE);
+            gifView.pause();//开始动画
         }
         if (success){
             Log.d(L,"刷新完成");
         } else {
             Log.d(L,"刷新完成");
         }
-        return 500;//延迟500毫秒之后再弹回
+        return setLoadMoreFinishDelayTime();//延迟100毫秒之后再弹回
     }
 
 
+    public int setLoadMoreFinishDelayTime() {
+        return 0;
+    }
 
     @Override
     public boolean isSupportHorizontalDrag() {
@@ -172,30 +163,30 @@ public class MyFooterView extends LinearLayout implements RefreshFooter {
 
     @Override
     public void onStateChanged(RefreshLayout refreshLayout, RefreshState oldState, RefreshState newState) {
-            switch (newState) {
-                case None:
-                case PullDownToRefresh:
-                    Log.i(L, "下拉开始刷新");
-                    break;
-                case Refreshing:
-                    Log.i(L, "正在刷新");
-                    if (footerNoMoreLayout != null && footerNoMoreLayout.getVisibility() == VISIBLE) {
-                        footerNoMoreLayout.setVisibility(GONE);
-                        footerRoot.setVisibility(VISIBLE);
-                        Log.d("footer","隐藏footer");
-                    }
-                    break;
-                case ReleaseToRefresh:
-                    Log.i(L, "释放立即刷新");
-                    break;
-            }
+        switch (newState) {
+            case None:
+            case PullDownToRefresh:
+                Log.i(L, "下拉开始刷新");
+                break;
+            case Refreshing:
+                Log.i(L, "正在刷新");
+                if (footerNoMoreLayout != null && footerNoMoreLayout.getVisibility() == VISIBLE) {
+                    footerNoMoreLayout.setVisibility(GONE);
+                    footerRoot.setVisibility(VISIBLE);
+                    Log.d("footer","隐藏footer");
+                }
+                break;
+            case ReleaseToRefresh:
+                Log.i(L, "释放立即刷新");
+                break;
+        }
     }
 
 
     @Override
-    public boolean setNoMoreData(boolean finished) {
-        this.isFinished=finished;
-        if(finished) {
+    public boolean setNoMoreData(boolean noMoreData) {
+        this.isFinished=noMoreData;
+        if(noMoreData) {
             Log.d("footer","显示我有底线");
             footerNoMoreLayout.setVisibility(VISIBLE);
             footerRoot.setVisibility(GONE);
