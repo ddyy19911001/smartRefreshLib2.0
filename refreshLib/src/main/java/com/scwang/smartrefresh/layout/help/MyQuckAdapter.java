@@ -6,7 +6,7 @@ import androidx.annotation.Nullable;
 
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 
 import java.util.List;
 
@@ -17,9 +17,6 @@ public abstract class MyQuckAdapter<T> extends BaseQuickAdapter<T, BaseViewHolde
         this.context=context;
     }
 
-    public Context getContext() {
-        return context;
-    }
 
     @Override
     protected abstract void convert(BaseViewHolder helper, T item);
